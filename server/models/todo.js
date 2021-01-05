@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model
+  Model, DATEONLY, DATE
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
@@ -11,13 +11,34 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Todo.belongsTo(models.User, {foreignKey: 'userID'})
     }
   };
   Todo.init({
-    title: DataTypes.STRING,
+    title: {
+      type: DataTypes.STRING,
+      validate : {
+        notEmpty: {
+          msg: "Title cannot be empty!"
+        }
+      }
+    },
     description: DataTypes.STRING,
     status: DataTypes.BOOLEAN,
-    due_date: DataTypes.DATEONLY
+    userID:DataTypes.INTEGER,
+    due_date: {
+      type: DataTypes.DATE,
+      validate: {
+        isDate:{
+          args: true,
+          msg: "Input must be date in format YYYY-MM-DD"
+        },
+        isAfter: {
+          args: new Date().toString(),
+          msg: "Date must be greater than today"
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Todo',

@@ -14,9 +14,9 @@
 
 ## RESTful endpoints
 
-### GET /todo
+### GET /todo/::id
 
-> Get all todo
+> Get todo by PK
 
 _Request Header_
 ```
@@ -32,20 +32,25 @@ not needed
 
 _Response (200)_
 ```json
-[
-  {
-    "id": 1,
-    "title": "<to do title>",
-    "description": "<to do description>",
-    "status": "<todo status done or not yet>",
-    "due_date": "<todo due date>",
-  },
-  {
-    "id": 2,
-    "title": "<to do title>",
-    "description": "<to do description>",
-    "status": "<todo status done or not yet>",
-    "due_date": "<todo due date>",
+{
+  "id": 1,
+  "title": "<to do title>",
+  "description": "<to do description>",
+  "status": "<boolean>",
+  "due_date": "<todo due date>",
+}
+
+```
+
+_Response (404 - not found)_
+```
+{
+  "message": "Data not found"
+}
+```
+---
+
+ "due_date": "<todo due date>",
   }
 ]
 ```
@@ -121,7 +126,7 @@ _Response (201 - Created)_
     "id": "<given id by system>",
     "title": "<posted title>",
     "description": "<posted description>",
-    "status": "<default by system>",
+    "status": "<boolean>",
     "due_date": "<posted due date>"
   }
 ```
