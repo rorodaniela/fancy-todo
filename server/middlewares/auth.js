@@ -1,4 +1,4 @@
-const {User} = require('../models')
+const {User, Todo} = require('../models')
 const {cekToken} = require('../helpers/jwt')
 
 function authentication (req, res, next)  {
@@ -14,6 +14,7 @@ function authentication (req, res, next)  {
                 res.status(500).json({message: `please login first`})
             }
             else{
+                req.user = data
                 next()
             }
         })
@@ -26,6 +27,31 @@ function authentication (req, res, next)  {
     }
 }
 
+function authorize(req, res, next) {
+    Todo.findOne({
+        where: {
+            id: +req.params.id
+        }
+    })
+    .then( todo => {
+        console.log(todo, "<===");
+        console.log("====>", req.user);
+        if (todo) {
+            if (todo.userID == req.user.id) {
+                next()
+            } else {
+                res.status(401).json({ message: `unAuthorize`})
+            }
+        } else {
+            res.status(404).json({ message: `not found`})
+        }
+    })
+    .catch( err => {
+        res.status(401).json({ message: err.message})
+    })
+}
+
 module.exports = {
-    authentication
+    authentication,
+    authorize
 }
