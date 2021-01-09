@@ -3,7 +3,7 @@ const {cekToken} = require('../helpers/jwt')
 
 function authentication (req, res, next)  {
     try {
-        let decoded = cekToken(req.headers.accesstoken)
+        let decoded = cekToken(req.headers.access_token)
         User.findOne({
             where: {
                 email: decoded.email

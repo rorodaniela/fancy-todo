@@ -4,6 +4,7 @@ const {generateToken} = require('../helpers/jwt')
 
 class Controller {
     static register(req, res){
+        console.log(req.body.email, req.body.password, "<<<<<<<");
         let newData = {
             email: req.body.email,
             password: req.body.password
@@ -44,9 +45,9 @@ class Controller {
                     id: data.id,
                     email: data.email
                 }
-                const accessToken = generateToken(payload)
+                const access_token = generateToken(payload)
                 return res.status(200).json({ 
-                    accessToken: accessToken 
+                    access_token: access_token 
                 })
             } else{
                 res.status(401).json({message: `invalid email or password`})
