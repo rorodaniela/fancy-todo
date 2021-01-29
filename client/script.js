@@ -1,4 +1,5 @@
 const baseUrl = "http://localhost:3000"
+let todoId
 $(document).ready(function () {
     authentication()  
     $('#register-page').hide()
@@ -83,14 +84,32 @@ function todoList() {
                 access_token: localStorage.access_token
             }
         })
-        .done(response => {
-            console.log(response);
-            let todos = `
-            <h3> ini nanti isi konten todo</h3>
-            <button type="submit" class="btn btn-primary" id="add-todo-btn">add Todo</button>
-            <button type="submit" class="btn btn-danger" id="delete-todo-btn">delete Todo</button>
-            `
-            $('#todo-content').append(todos)
+        .done(data => {
+            $('#todo-list').empty()
+            $.each(data, (index, data) => {
+
+            let status = `<input type="checkbox" class="form-check-input" id="status-${data.id}" onclick="editStatus(${data.id}, '${data.status}')" `
+            if (data.status === true) {
+                status += `checked>`
+            } else if(data.status === false){
+                status += `>`
+            }
+                // console.log(data)
+                $('#todo-list').append(`
+                <div class="card" id="list-task" style="width: 40rem";>
+                    <div class="card-body todo-list-card" id=todoCard${data.id}>
+                        <div id=todoCardBody${data.id}>
+                            ${status}
+                            <h5 class="card-title">${data.title}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${data.due_date.split('T')[0]}</h6>
+                            <p class="card-text">${data.description}</p>
+                            <a href="#" onclick='editForm(${data.id})' class="card-link btn btn-primary" id="editTodo">Edit</a>
+                            <a href="#" onclick='deleteTodo(event, ${data.id})' class="card-link btn btn-danger" id="deleteTodo">Hapus</a>
+                        </div>
+                    </div>
+                </div>
+            `)
+            })
         })
         .fail(err => {
             console.log(err, "ini error todo list dari ajax");
@@ -99,56 +118,170 @@ function todoList() {
         })
 }
 
+$('#add-todo-btn').click(function (event) {
+    event.preventDefault()
+    $('#add-todo-form').show()
+})
+
+$('#add-submit').click(function (event) {
+    event.preventDefault()
+    addTodo()
+})
 //add todo
 function addTodo() {
-    $('#add-todo-btn').click(function (event) {
-        event.preventDefault()
-        let title = $('#title-add').val()
-        let description = $('description-add').val()
-        let due_date = $('due_date-add').val()
+        let title = $('#todo-tile').val()
+        let description = $('#todo-description').val()
+        let due_date = $('#todo-date').val()
         // ajax
         $.ajax({
             method: 'POST',
             url: `${baseUrl}/todo`,
-            headers: { access_token: localStorage.access_token },
+            headers: {
+                access_token: localStorage.access_token
+            },
             data: {
-                title,
-                description,
-                due_date
+               title,
+               description,
+               due_date
             }
         })
         .done(response => {
-            console.log(response);
+            todoList()
+            $('#add-todo-form').hide()
         })
         .fail(err => {
             console.log(err, "ini error dari ajax");
         })
         .always(()=>{
         })
+}
+
+$(`#add-cancel-btn`).click(function (event) {
+    event.preventDefault()
+    $('#add-form').hide()
+})
+
+// delete todo
+function deleteTodo(event, id) {
+    event.preventDefault
+    $.ajax({
+        method: 'DELETE',
+        url: `${baseUrl}/todo/${id}`,
+        headers: {
+            access_token: localStorage.access_token
+        }
+    })
+    .done(response => {
+            todoList()
+        })
+        .fail(err => {
+            console.log(err, "ini error dari ajax");
+        })
+        .always(()=>{
+        })
+}
+// edit
+
+function editForm(id) {
+    todoId = id
+    $.ajax({
+            method: 'GET',
+            url: `${baseUrl}/todo/${todoId}`,
+            headers: {
+                access_token: localStorage.access_token
+            }
+        })
+        .done(data => {
+            $(`#todoCardBody${todoId}`).hide()
+            $(`#todoCard${todoId}`).append(`
+            <div class="edited-form">
+            <h3>Edit Form</h3>
+        <form role="form" id="form-edit-main${todoId}">
+            <input type="text" class="form-control" value="${data.title}" name="tile" id="title-edit">
+            <input type="text" class="form-control" value= "${data.due_date.split('T')[0]}" name="due_date" id="due-date-edit">
+            <input type="text" class="form-control" value="${data.description}" name="description" id="description-edit">
+            <button onclick="submitEdit(event)" class="btn btn-primary" id="edit-button">Save</button>
+            <button onclick="editCancel(event)" class="btn btn-danger" id="edit-cancel-button">Cancel</button>
+        </form>
+        </div>
+        `)
     })
 }
 
-// delete todo
-function deleteTodo() {
-    $('#delete-todo-btn').click(function (event) {
-        event.preventDefault()
-        let id = 
-        // ajax
-        $.ajax({
-            method: 'DELETE',
-            url: `${baseUrl}/todo`,
-            headers: { access_token: localStorage.access_token },
-            params: { id }
+function editCancel(event) {
+    event.preventDefault()
+    $(`#form-edit-main`).hide()
+    $('.todo-list-card').show()
+    $(`#add-todo-form`).hide()
+    todoList()
+}
+
+function submitEdit(event) {
+    event.preventDefault()
+    editSubmit()
+}
+function editSubmit(event) {
+    $(`#form-edit-main`).show()
+
+    $.ajax({
+            method: 'PUT',
+            url: `${baseUrl}/todo/${todoId}`,
+            headers: {
+                access_token: localStorage.access_token
+            },
+            data: {
+                title: $('#title-edit').val(),
+                description: $('#description-edit').val(),
+                due_date: $('#due-date-edit').val()
+            }
         })
-        .done(response => {
-            console.log(response);
+        .done(data => {
+            $(`#form-edit-main`).hide()
+            $('.todo-list-card').show()
+            $(`#add-todo-form`).show()
+            $('#add-todo-form').hide()
+            todoList()
         })
         .fail(err => {
-            console.log(err, "ini error dari ajax");
+            console.log(err, 'ERROR EDIT')
         })
-        .always(()=>{
+        .always(() => {
+            $('#title-edit').val('')
+            $('#due-date-edit').val('')
+            $('#description-edit').val('')
         })
-    })
+}
+
+// edit status
+function editStatus(id, status) {
+
+    let inputStatus
+    if (status === 'true') {
+        inputStatus = false
+    } else {
+        inputStatus = true
+    }
+
+    $.ajax({
+            method: 'PATCH',
+            url: `${baseUrl}/todo/${id}`,
+            headers: {
+                access_token: localStorage.access_token
+            },
+            data: {
+                status: inputStatus
+            }
+        })
+        .done(data => {
+            console.log('Berhasil di Edit')
+            readTodo()
+        })
+        .fail(err => {
+            console.log(err, "ERROR EDIT")
+        })
+        .always(() => {
+
+        })
 }
 
 function authentication() {
@@ -169,6 +302,7 @@ function afterlogin() {
     $('#login-page').hide()
     $('#todo-page').show()
     $('#navbar').show()
+    $('#add-todo-form').hide()
     todoList()
 }
 

@@ -3,7 +3,6 @@ const { hashPassword } = require('../helpers/bcrypt')
 const {
   Model
 } = require('sequelize');
-const { options } = require('../routes');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**

@@ -35,28 +35,60 @@
     </div>
     <!-- register -->
     <div id="register-page">
-      <h1>Register Account</h1>
-      <form>
-          <div class="form-group">
-              <label for="email-register">Email address :</label>
-              <input type="email" class="form-control" name="email-register" id="email-register" placeholder="Enter email" required>
-          </div>
-          <div class="form-group">
-              <label for="password-register">Password :</label>
-              <input type="password" class="form-control" name="password-register" id="password-register" placeholder="Password" required>
-          </div>
-          <div>
-              <button type="submit" class="btn btn-primary" id="register-post-btn">register</button>
-          </div><br>
-      </form>
+      <div class="container">
+        <h1>Register Account</h1>
+        <form>
+            <div class="form-group">
+                <label for="email-register">Email address :</label>
+                <input type="email" class="form-control" name="email-register" id="email-register" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+                <label for="password-register">Password :</label>
+                <input type="password" class="form-control" name="password-register" id="password-register" placeholder="Password" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" id="register-post-btn">register</button>
+            </div><br>
+        </form>
+      </div>
   </div>
 
     <!-- todo page -->
-    <div id="todo-page">
-      <h2>To Do</h2>
-      <div id="todo-content">
+
+  <div class="container-fluid" id="todo-page">
+    <div class='row'>
+      <div class="col-md-4">
+        
+      </div>
+
+      <!-- Add Todo -->
+
+      <div class="col-md-8" id="add-todo">
+        <div class="row">
+          <div class="col-md-6">
+            <h1 style="border-color: white;">To-Do List</h1>
+            <button type="button" class="btn btn btn-dark" id="add-todo-btn">Add New Todo</button>
+            <div class="form-group" id="add-todo-form">
+              <form role="form" id='add-form'>
+                <input type="text" class="form-control" placeholder="New Todo" name="title" id="todo-tile">
+                <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="due_date" id="todo-date">
+                <input type="text" class="form-control" placeholder="Description" name="description" id="todo-description">
+                <button class="btn btn-primary" id="add-submit">Add</button>
+                <button class="btn btn-danger" id="add-cancel-btn">Cancel</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- todo card -->
+        </div>
+        <div class="todo" id="todo-list">
+
+        </div>
+
       </div>
     </div>
+  </div>
+</div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
